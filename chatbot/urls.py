@@ -1,7 +1,8 @@
 from django.urls import path
 
-from .views import index
+#from .views import message_list
+from . import views
 
 urlpatterns = [
-    path('<slug:question>/',index,name='index')
+    path('<slug:question>/',views.message_list, name='message-list')
 ]

@@ -11,6 +11,21 @@ from .models import Note, Query, Unanswered_Query
 
 nlp_out = nlp_module()
 
-def index(request, question):
-    answer = Query.objects.get(question=question).response
-    return HttpResponse(answer)
+
+@api_view(['POST'])
+@csrf_exempt
+
+#def index(request, question):
+#    answer = Query.objects.get(question=question).response
+#    return HttpResponse(answer)
+
+def message_list(request, sender=None, receiver=None):
+
+    if request.method == 'POST':
+        print(request.body)
+        var=json.loads(request.body)
+        input_question=var["messages"]
+        nlp_output = nlp_out.respond(input_question)
+        final_out = response_generation(nlp_output, input_question)
+        body = {"message": final_out}
+        return JsonResponse(body, status=200)
