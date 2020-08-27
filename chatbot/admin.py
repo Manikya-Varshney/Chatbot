@@ -17,7 +17,7 @@ class QueryResource(resources.ModelResource):
             model : Which model to use
             skip_unchanged : skip import of unchnaged records
             report_skipped : Report what columns are skipped
-            exclide : What fields to exclude
+            exclude : What fields to exclude
             import_id_fields : What fields to include in import
             fields : What fields to include in import export resource.
         '''
@@ -25,17 +25,17 @@ class QueryResource(resources.ModelResource):
         skip_unchanged = True
         report_skipped = False
         exclude = ('id')
-        import_id_fields = ('intent', 'response',)
-        fields = ('intent', 'response',)
+        import_id_fields = ('question', 'response',)
+        fields = ('question', 'response',)
     def before_import(self, dataset, using_transactions, dry_run, **kwargs):
         for row in dataset:
             print(row)
             if row[0] is None and row[1] is None:
                 raise ValidationError('Row cannot be empty\n')
             elif row[1] is None:
-                raise ValidationError(' Response cannot be null for intent = %s\n' % row[0])
+                raise ValidationError(' Response cannot be null for question = %s\n' % row[0])
             elif row[0] is None:
-                raise ValidationError(' Intent cannot be null for response = %s\n' % row[1])
+                raise ValidationError(' Question cannot be null for response = %s\n' % row[1])
         return
 
 class QueryAdmin(ImportExportModelAdmin):

@@ -1,6 +1,7 @@
 from sentence_transformers import SentenceTransformer
 import scipy.spatial
 import string
+from .models import Query
 
 class nlp_module:
     """
@@ -49,7 +50,7 @@ class nlp_module:
         data = ""
         queries_all = Query.objects.all()
         for q in queries_all:
-            data += "\n" + q.intent
+            data += "\n" + q.question
         data = data[1:]
         return data
 
