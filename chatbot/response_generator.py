@@ -22,24 +22,37 @@ def response_generation(s,input_question):
         string: s2- A string type variable that contains the appropriate response to the user query
     """
     from django.db import connection
-    with connection.cursor() as cursor:   # creates a database cursor object called "cursor" which enables us to run sql queries on the database
+    from .models import Query, Unanswered_Query
+    with connection.cursor() as cursor1:   # creates a database cursor object called "cursor" which enables us to run sql queries on the database
         if s==-1:
-            cursor.execute("SELECT * FROM Unanswered_query") # extracts all the data from the table.
+            #cursor.execute("SELECT * FROM Unanswered_Query") # extracts all the data from the table.
+            #unanswered_queries=Unanswered_Query.objects.all()
+            #for x in unanswered_queries:
+            cursor= Unanswered_Query.objects.all()
+            print(cursor)
             for x in cursor:      # for loop is used to check if the input_question is already present in the table or not. If it is present then no need to add it again.
-                if x[0]==input_question:
+                if x==input_question:
                     s2="Sorry, cannot understand the question from provided information."
                     return s2
             try:
-                cursor.execute("INSERT INTO Unanswered_query(unanswered_query) VALUES(%s)",[input_question]) # adds input_question to the table. Try block is there just to avoid any unforeseen errors.
+                cursor= Unanswered_Query.objects.create(unanswered_query=input_question)
+                #cursor.execute("INSERT INTO Unanswered_Query(unanswered_query) VALUES(%s)",[input_question]) # adds input_question to the table. Try block is there just to avoid any unforeseen errors.
+                #Unanswered_Query.objects.create(unanswered_query=input_question)
             except:
                 pass
             s2="Sorry, cannot understand the question from provided information."
             return s2
-        sql_query=("SELECT response from Query WHERE question=%s") # creation of sql query to search the database
-        cursor.execute(sql_query,[s])  # executes the query and returns a list of tuples to cursor
+        #sql_query=("SELECT response from Query WHERE question=%s") # creation of sql query to search the database
+        try:
+            cursor=Query.objects.get(question=input_question)
+
+        except Query.DoesNotExist:
+            return "Question does not match"
+
+        #cursor.execute(sql_query,[s])  # executes the query and returns a list of tuples to cursor
         # cursor contains the "response".
         # We need to traverse the cursor to get the "response" in string form.
-        for x in cursor:
-            s1=x
-        s2=''.join(s1) # creates the response string
-    return s2 # returns the string
+        #for x in cursor:
+        s1=cursor
+        #s2=''.join(s1) # creates the response string
+    return s1 # returns the string
